@@ -2,54 +2,42 @@ from neo4jrestclient.client import GraphDatabase
 
 db = GraphDatabase("http://localhost:7474/", username="neo4j", password="neo4j")
 
-query = "MATCH p=(e:WordStem {Stem:'lion'})-[r:Weights]-(c:WordStem) WHERE tofloat(r.Weight)>0.1 RETURN  c.Stem" # ORDER BY tofloat(r.Weight) DESC"
+query = "MATCH p=(e:WordStem {Stem:'god'})-[r:Weights]-(c:WordStem) WHERE tofloat(r.Weight)>0.1 RETURN  c.Stem" # ORDER BY tofloat(r.Weight) DESC"
 results = db.query(query,data_contents=True)
-list = []
+#list = []
 listT=[]
+#listP=[]
+listN=[]
 for i in results.rows:
-    q = []
+    #q = []
     query = "MATCH p=(e:WordStem{Stem:'"+i[0]+"'} )-[r:Weights]->(c:WordStem) WHERE tofloat(r.Weight)>0.1 RETURN  c.Word, (r.Weight)"
     resultsA = db.query(query,data_contents=True)
     for j in resultsA.rows:
-        """cont = 0
-        for k in range(0,len(listT)):
-            #print (listT[k])
-            if j[0]==listT[k][0]:
-                listT[k][1]+=float(j[1])
-            else:
-                cont+=1
-        if cont==len(listT):
-            listT.append([j[0],0])
-        """
-        if ( [j[0],0] not in listT):
-            listT.append([j[0],0])
-        q.append([j[0],float(j[1])])
-    list.append(q)
+			 
+        if ( j[0] not in listT):
+            listT.append(j[0])
+            #listP.append(float(j[1]))
+            listN.append([j[0],float(j[1])])
+        else:
+            #listP[listT.index(j[0])]+=float(j[1])
+            listN[listT.index(j[0])][1]+=float(j[1])
+        #q.append([j[0],float(j[1])])
+    #list.append(q)
 
+#for i in range (0,len(listT)):
+#    listN.append([listT[i],listP[i]])
 
-
-for i in listT:
-    for j in list:
-        for k in j:
-            if i[0] in k:
-                i[1]+=k[1]
 
 def takeSecond(elem):
     return float(elem[1])
 
 # sort list with key
-listT.sort(reverse=True,key=takeSecond)
+listN.sort(reverse=True,key=takeSecond)
 for i in range (0,100):
-    print(listT[i])
-
-
-
-
+    print(listN[i])
 
 
 #ranking de Aristas
-
-
 
 #interseccion de palabras en list
 
